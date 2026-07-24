@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ひゃくます けいさん ドリル</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Yomogi&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap');
+
+  :root{
+    --cream: #FFF8EE;
+    --pink: #FF8FA3;
+    --pink-dark: #E8637C;
+    --yellow: #FFD166;
+    --sky: #5FC9E8;
+    --mint: #7ED9A8;
+    --ink: #5B4A3F;
+    --line: #F0DFC8;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 10% 15%, #FFE9C7 0%, transparent 35%),
+      radial-gradient(circle at 90% 85%, #CFEFFF 0%, transparent 40%),
+      var(--cream);
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    color: var(--ink);
+    padding: 24px 12px 60px;
+  }
+
+  .stage{
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom: 20px;
+  }
+
+  h1{
+    font-family: 'Yomogi', cursive;
+    font-size: clamp(28px, 6vw, 42px);
+    color: var(--pink-dark);
+    margin: 0;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 #fff, 4px 4px 0 rgba(232,99,124,0.15);
+  }
+  h1 .deco{ display:inline-block; transform: rotate(-8deg); }
+
+  .sub{
+    margin-top: 6px;
+    font-size: 14px;
+    color: #A9937F;
+  }
+
+  /* タブ */
+  .tabs{
+    display:flex;
+    justify-content:center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .tab-btn{
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 17px;
+    padding: 12px 26px;
+    border-radius: 999px;
+    border: 3px solid transparent;
+    cursor: pointer;
+    background: #fff;
+    color: #C7B7A3;
+    box-shadow: 0 3px 0 #E9DCC8;
+    transition: transform .12s ease, box-shadow .12s ease, color .12s, border-color .12s;
+  }
+  .tab-btn:active{ transform: translateY(2px); box-shadow: 0 1px 0 #E9DCC8; }
+  .tab-btn.plus.active{
+    background: var(--pink);
+    color: #fff;
+    border-color: var(--pink-dark);
+    box-shadow: 0 3px 0 var(--pink-dark);
+  }
+  .tab-btn.mul.active{
+    background: var(--sky);
+    color: #fff;
+    border-color: #2E9FC4;
+    box-shadow: 0 3px 0 #2E9FC4;
+  }
+
+  /* コントロールパネル */
+  .panel{
+    background: #fff;
+    border-radius: 24px;
+    padding: 16px 18px;
+    box-shadow: 0 6px 0 var(--line);
+    margin-bottom: 18px;
+    display:flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items:center;
+    justify-content: space-between;
+  }
+  .panel .left-group{
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  }
+  .field{
+    display:flex; flex-direction:column; gap:4px; font-size:12px; color:#A9937F; font-weight:700;
+  }
+  select, input[type=number]{
+    font-family:inherit;
+    font-size:15px;
+    font-weight:700;
+    color: var(--ink);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    padding: 6px 10px;
+    background:#FFFCF6;
+  }
+
+  .action-btn{
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 15px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.15);
+  }
+  .action-btn:active{ transform: translateY(2px); box-shadow:none; }
+  .btn-new{ background: var(--mint); }
+  .btn-check{ background: var(--yellow); color:#7A5A16; box-shadow: 0 3px 0 #C79A32;}
+  .btn-print{ background: #B9A7E0; }
+
+  /* 結果メッセージ */
+  .result-msg{
+    text-align:center;
+    font-weight:800;
+    font-size: 15px;
+    min-height: 24px;
+    margin-bottom: 10px;
+  }
+  .result-msg.good{ color: #4CAF7D; }
+  .result-msg.bad{ color: var(--pink-dark); }
+
+  /* グリッド */
+  .grid-wrap{
+    background:#fff;
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 8px 0 var(--line);
+    overflow-x: auto;
+  }
+
+  table.grid{
+    border-collapse: separate;
+    border-spacing: 4px;
+    margin: 0 auto;
+  }
+
+  table.grid th, table.grid td{
+    text-align:center;
+    vertical-align:middle;
+  }
+
+  .corner{
+    width: 44px; height:44px;
+    font-size: 20px;
+  }
+  .op-icon{ display:inline-block; }
+
+  .head-cell{
+    width: 44px; height:44px;
+    min-width:44px;
+    border-radius: 12px;
+    background: var(--yellow);
+    color: #7A5A16;
+    font-weight: 800;
+    font-size: 17px;
+    box-shadow: inset 0 -3px 0 rgba(0,0,0,0.08);
+  }
+  .head-cell.row-head{
+    background: var(--sky);
+    color: #fff;
+  }
+  table.grid.plusMode .head-cell.row-head{ background: var(--pink); }
+
+  .cell-input{
+    width: 44px; height:44px;
+    min-width:44px;
+    text-align:center;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: #FFFCF6;
+    padding:0;
+  }
+  .cell-input:focus{
+    outline:none;
+    border-color: var(--sky);
+    background: #fff;
+  }
+  table.grid.plusMode .cell-input:focus{ border-color: var(--pink); }
+
+  .cell-input.correct{
+    background: #E4F8EC;
+    border-color: var(--mint);
+    color: #3C9A6A;
+  }
+  .cell-input.wrong{
+    background: #FFE8EC;
+    border-color: var(--pink-dark);
+    color: var(--pink-dark);
+  }
+
+  footer{
+    text-align:center;
+    margin-top: 26px;
+    font-size: 12px;
+    color: #C7B7A3;
+  }
+
+  .float-deco{
+    position:fixed;
+    font-size: 26px;
+    opacity: .5;
+    pointer-events:none;
+    animation: floaty 6s ease-in-out infinite;
+  }
+  @keyframes floaty{
+    0%,100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(-14px) rotate(8deg); }
+  }
+
+  @media print{
+    .tabs, .panel, .result-msg, footer, .float-deco{ display:none !important; }
+    body{ background:#fff; padding:0; }
+    .grid-wrap{ box-shadow:none; }
+  }
+
+  @media (max-width: 480px){
+    .head-cell, .cell-input, .corner{ width:34px; height:34px; min-width:34px; font-size:13px;}
+    h1{ letter-spacing: 0; }
+  }
+</style>
+</head>
+<body>
+
+<span class="float-deco" style="top:8%; left:4%;">⭐</span>
+<span class="float-deco" style="top:20%; right:5%; animation-delay:1.5s;">🍓</span>
+<span class="float-deco" style="bottom:10%; left:8%; animation-delay:3s;">🌸</span>
+
+<div class="stage">
+  <header>
+    <h1><span class="deco">✏️</span> ひゃくます けいさん <span class="deco">🍀</span></h1>
+    <p class="sub">2年生の れんしゅうドリル だよ。がんばって といてみよう！</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn plus active" id="tabPlus" onclick="switchMode('plus')">➕ たしざん編</button>
+    <button class="tab-btn mul" id="tabMul" onclick="switchMode('mul')">✖️ かけざん編</button>
+  </div>
+
+  <div class="panel">
+    <div class="left-group">
+      <div class="field">
+        <label for="rangeSelect">かずの はんい</label>
+        <select id="rangeSelect" onchange="generateGrid()"></select>
+      </div>
+      <div class="field">
+        <label for="sizeSelect">ますの おおきさ</label>
+        <select id="sizeSelect" onchange="generateGrid()">
+          <option value="5">5×5</option>
+          <option value="10" selected>10×10</option>
+        </select>
+      </div>
+    </div>
+    <div class="left-group">
+      <button class="action-btn btn-new" onclick="generateGrid()">🔄 もんだい さくせい</button>
+      <button class="action-btn btn-check" onclick="checkAnswers()">✅ こたえあわせ</button>
+      <button class="action-btn btn-print" onclick="window.print()">🖨️ いんさつ</button>
+    </div>
+  </div>
+
+  <p class="result-msg" id="resultMsg"></p>
+
+  <div class="grid-wrap">
+    <table class="grid plusMode" id="gridTable"></table>
+  </div>
+
+  <footer>まちがえても だいじょうぶ。なんかいでも れんしゅうしよう ✨</footer>
+</div>
+
+<script>
+let mode = 'plus'; // 'plus' or 'mul'
+let rowNums = [];
+let colNums = [];
+
+const RANGES = {
+  plus: [
+    { label: '1〜9 のかず', min:1, max:9 },
+    { label: '1〜5 のかず（かんたん）', min:1, max:5 },
+    { label: '5〜13 のかず（ちょいムズ）', min:5, max:13 },
+  ],
+  mul: [
+    { label: '1の段〜9の段', min:1, max:9 },
+    { label: '1〜5の段（かんたん）', min:1, max:5 },
+    { label: '2〜9の段', min:2, max:9 },
+  ]
+};
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function pickNums(min, max, count){
+  // 重複ありでランダムに並べる(百ます計算らしいランダム順)
+  const pool = [];
+  for(let n=min;n<=max;n++) pool.push(n);
+  const res = [];
+  for(let i=0;i<count;i++){
+    res.push(pool[Math.floor(Math.random()*pool.length)]);
+  }
+  return res;
+}
+
+function populateRangeSelect(){
+  const sel = document.getElementById('rangeSelect');
+  sel.innerHTML = '';
+  RANGES[mode].forEach((r, idx) => {
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.textContent = r.label;
+    sel.appendChild(opt);
+  });
+}
+
+function switchMode(newMode){
+  mode = newMode;
+  document.getElementById('tabPlus').classList.toggle('active', mode==='plus');
+  document.getElementById('tabMul').classList.toggle('active', mode==='mul');
+  populateRangeSelect();
+  generateGrid();
+}
+
+function generateGrid(){
+  document.getElementById('resultMsg').textContent = '';
+  document.getElementById('resultMsg').className = 'result-msg';
+
+  const size = parseInt(document.getElementById('sizeSelect').value, 10);
+  const rangeIdx = parseInt(document.getElementById('rangeSelect').value || 0, 10);
+  const range = RANGES[mode][rangeIdx];
+
+  rowNums = pickNums(range.min, range.max, size);
+  colNums = pickNums(range.min, range.max, size);
+
+  const table = document.getElementById('gridTable');
+  table.className = 'grid ' + (mode === 'plus' ? 'plusMode' : 'mulMode');
+  table.innerHTML = '';
+
+  // ヘッダー行
+  const headRow = document.createElement('tr');
+  const cornerTh = document.createElement('th');
+  cornerTh.className = 'corner head-cell';
+  cornerTh.innerHTML = mode === 'plus' ? '<span class="op-icon">➕</span>' : '<span class="op-icon">✖️</span>';
+  headRow.appendChild(cornerTh);
+
+  colNums.forEach(cn => {
+    const th = document.createElement('th');
+    th.className = 'head-cell';
+    th.textContent = cn;
+    headRow.appendChild(th);
+  });
+  table.appendChild(headRow);
+
+  // 各行
+  rowNums.forEach((rn, rIdx) => {
+    const tr = document.createElement('tr');
+    const rowHeadTh = document.createElement('th');
+    rowHeadTh.className = 'head-cell row-head';
+    rowHeadTh.textContent = rn;
+    tr.appendChild(rowHeadTh);
+
+    colNums.forEach((cn, cIdx) => {
+      const td = document.createElement('td');
+      const input = document.createElement('input');
+      input.type = 'text';
+      inputSetup(input, rIdx, cIdx);
+      td.appendChild(input);
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  });
+}
+
+function inputSetup(input, rIdx, cIdx){
+  input.className = 'cell-input';
+  input.inputMode = 'numeric';
+  input.pattern = '[0-9]*';
+  input.dataset.row = rIdx;
+  input.dataset.col = cIdx;
+  input.addEventListener('input', () => {
+    input.value = input.value.replace(/[^0-9]/g, '');
+    input.classList.remove('correct','wrong');
+  });
+  input.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      moveToNext(rIdx, cIdx);
+    }
+  });
+}
+
+function moveToNext(rIdx, cIdx){
+  const size = colNums.length;
+  let nr = rIdx, nc = cIdx + 1;
+  if(nc >= size){ nc = 0; nr += 1; }
+  const next = document.querySelector(`.cell-input[data-row="${nr}"][data-col="${nc}"]`);
+  if(next) next.focus();
+}
+
+function checkAnswers(){
+  const inputs = document.querySelectorAll('.cell-input');
+  let total = 0, correct = 0, filled = 0;
+
+  inputs.forEach(input => {
+    const r = parseInt(input.dataset.row, 10);
+    const c = parseInt(input.dataset.col, 10);
+    const answer = mode === 'plus' ? rowNums[r] + colNums[c] : rowNums[r] * colNums[c];
+    total++;
+    input.classList.remove('correct','wrong');
+    if(input.value === ''){ return; }
+    filled++;
+    if(parseInt(input.value, 10) === answer){
+      input.classList.add('correct');
+      correct++;
+    } else {
+      input.classList.add('wrong');
+    }
+  });
+
+  const msg = document.getElementById('resultMsg');
+  if(filled === 0){
+    msg.textContent = 'こたえを かいてから ボタンを おしてね！';
+    msg.className = 'result-msg';
+    return;
+  }
+  if(correct === total){
+    msg.textContent = `🎉 ぜんもん せいかい！ すごい！(${correct}/${total})`;
+    msg.className = 'result-msg good';
+  } else {
+    msg.textContent = `${correct}/${total} もん せいかい。ピンクのところを みなおしてみよう！`;
+    msg.className = 'result-msg bad';
+  }
+}
+
+// 初期化
+populateRangeSelect();
+generateGrid();
+</script>
+
+</body>
+</html>
